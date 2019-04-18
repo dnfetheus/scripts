@@ -5,8 +5,8 @@ help()
     echo -e "A script for Arch Linux distro that get a list of mirrors based on a given ISO country code from Pacman Mirrorlist Generator and rank them by speed\n\n" \
     "Usage: (/path/to/script) [options...]\n\n" \
     "Options:\n" \
-    "\t-h, --help\tThis help text\n" \
-    "\t-c, --country\tDefine a country by its ISO 2-code" 
+    "\t-h, -H, --help\tThis help text\n" \
+    "\t-c, -C, --country\tDefine a country by its ISO 2-code" 
     
     exit 0
 }
@@ -17,10 +17,10 @@ fi
 
 while [ "$1" != "" ]; do
     case $1 in
-        -c | --country )    shift
+        -c | -C | --country )    shift
                             country="$1"
                             ;;
-        -h | --help )       help
+        -h | -H | --help )       help
                             ;;
     esac
     shift
