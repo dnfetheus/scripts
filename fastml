@@ -15,6 +15,11 @@ if [ $# == 0 ]; then
     help
 fi
 
+if [ "$EUID" -ne 0 ];then
+    echo -e "Execute it as root"
+    exit 1
+fi
+
 while [ "$1" != "" ]; do
     case $1 in
         -c | -C | --country )    shift
@@ -29,9 +34,9 @@ done
 files=$(ls /etc/pacman.d/ -1 | grep -E "mirrorlist(\.backup\.\d+)?" | wc -l)
 mirrorlist_url="https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on"
 
-sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup.$files
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup.$files
 curl -s $mirrorlist_url | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors - > mirrorlist
-sudo mv mirrorlist /etc/pacman.d/mirrorlist
-sudo pacman -Syy
+mv mirrorlist /etc/pacman.d/mirrorlist
+pacman -Syy
 
 exit 0
