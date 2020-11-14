@@ -1,0 +1,4 @@
+#!/bin/sh
+
+url="wttr.in/$1"
+http GET $url --body
