@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker run -d --name postgres-db -e POSTGRES_PASSWORD=postgres -v pg_data:/var/lib/postgresql/data -p 5432:5432 postgres:13-alpine
+docker run -d --restart=always --name postgres-db -e POSTGRES_PASSWORD=postgres -v pg_data:/var/lib/postgresql/data -p 5432:5432 postgres:13-alpine
