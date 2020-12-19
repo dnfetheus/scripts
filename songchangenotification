@@ -1,23 +1,29 @@
-#!/bin/sh
+#!/bin/bash
 
-art_path="$HOME/.config/spotifyd/current.jpg"
+art_path="$HOME/.cache/spotifyd/arts"
+mkdir -p $art_path
 
-if [[ "$PLAYER_EVENT" = "start" ]] || [[ "$PLAYER_EVENT" = "change" ]]; then
+if [ "$PLAYER_EVENT" == "start" ] || [ "$PLAYER_EVENT" == "change" ]; then
 	status="Now playing"
 
-elif [[ "$PLAYER_EVENT" = "stop" ]]; then
+elif [ "$PLAYER_EVENT" == "stop" ]; then
 	status="Paused"
 
 else
 	status="Unknown"
 fi
 
-metadata=$(playerctl metadata -f "{{ mpris:artUrl }}\{{ title }}\{{ artist }}" -p "spotifyd")
+metadata=$(playerctl metadata -f "{{ mpris:artUrl }}\{{ title }}\{{ artist }}\{{ mpris:trackid }}" -p "spotifyd")
 art_url="$(cut -d'\' -f1 <<< $metadata)"
 song="$(cut -d'\' -f2 <<< $metadata)"
 artist="$(cut -d'\' -f3 <<< $metadata)"
+track_id="$(cut -d'\' -f4 <<< $metadata)"
 
-curl -s -o "$art_path" "$art_url" > /dev/null
+art_path="$art_path/$track_id"
+
+if [ ! -f "$art_path" ]; then
+	curl -s -o "$art_path" "$art_url" > /dev/null
+fi
 
 notify-send "Spotify" "$status\n$song by $artist" --icon="$art_path"
 
