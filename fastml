@@ -1,13 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 
 help()
 {
-    echo -e "A script for Arch Linux distro that get a list of mirrors based on a given ISO country code from Pacman Mirrorlist Generator and rank them by speed\n\nUsage as root: fastml [options...]\n\nOptions:\n\t-h, -H, --help  \tShow help text\n\t-c, -C, --country\tDefine a country by its ISO 2-code" 
+    echo -e "A script for Arch Linux distro that get a list of mirrors based on a given ISO country code from Pacman Mirrorlist Generator and rank them by speed
+    	Usage as root: fastml [options...]
+    	Options:
+    		-h, -H, --help	Show help text
+    		-c, -C, --country	Define a country by its ISO 2-code" 
     
     exit 0
 }
 
-if [ $# == 0 ]; then
+if [ $# -eq 0 ]; then
     help
 fi
 
@@ -28,11 +32,19 @@ if [ "$EUID" -ne 0 ];then
 fi
 
 files=$(ls /etc/pacman.d/ -1 | grep -E "mirrorlist(\.backup\.\d+)?" | wc -l)
-mirrorlist_url="https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on"
+mirrorlist_url="https://archlinux.org/mirrorlist/?country=$country&protocol=http&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on"
+
+text=$(curl -s $mirrorlist_url)
+
+if [ $? -ne 0 ]; then
+	echo "Something went wrong"
+	exit 1
+fi
 
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup.$files
-curl -s $mirrorlist_url | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors - > mirrorlist
-mv mirrorlist /etc/pacman.d/mirrorlist
+
+sed -e "s/^#Server/Server/" -e "/^#/d" <<< $text | rankmirrors - > /etc/pacman.d/mirrorlist
+
 pacman -Syy
 
 exit 0
