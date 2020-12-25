@@ -31,19 +31,17 @@ if [ "$EUID" -ne 0 ];then
     exit 1
 fi
 
-files=$(ls /etc/pacman.d/ -1 | grep -E "mirrorlist(\.backup\.\d+)?" | wc -l)
+files=$(ls /etc/pacman.d/ -1 | grep -c -E "mirrorlist(\.backup\.\d+)?")
 mirrorlist_url="https://archlinux.org/mirrorlist/?country=$country&protocol=http&protocol=https&ip_version=4&ip_version=6&use_mirror_status=on"
 
-text=$(curl -s $mirrorlist_url)
-
-if [ $? -ne 0 ]; then
+if ! text=$(curl -s "$mirrorlist_url"); then
 	echo "Something went wrong"
 	exit 1
 fi
 
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup.$files
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup."$files"
 
-sed -e "s/^#Server/Server/" -e "/^#/d" <<< $text | rankmirrors - > /etc/pacman.d/mirrorlist
+sed -e "s/^#Server/Server/" -e "/^#/d" <<< "$text" | rankmirrors - > /etc/pacman.d/mirrorlist
 
 pacman -Syy
 
