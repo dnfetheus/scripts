@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 url="wttr.in/$1"
-curl $url
+curl "$url"
