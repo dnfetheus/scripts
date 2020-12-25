@@ -1,7 +1,7 @@
 #!/bin/bash
 
 art_path="$HOME/.cache/spotifyd/arts"
-mkdir -p $art_path
+mkdir -p "$art_path"
 
 if [ "$PLAYER_EVENT" == "start" ] || [ "$PLAYER_EVENT" == "change" ]; then
 	status="Now playing"
@@ -13,13 +13,14 @@ else
 	status="Unknown"
 fi
 
-metadata=$(playerctl metadata -f "{{ mpris:artUrl }}\{{ title }}\{{ artist }}\{{ mpris:trackid }}" -p "spotifyd")
-art_url="$(cut -d'\' -f1 <<< $metadata)"
-song="$(cut -d'\' -f2 <<< $metadata)"
-artist="$(cut -d'\' -f3 <<< $metadata)"
-track_id="$(cut -d'\' -f4 <<< $metadata)"
+metadata=$(playerctl metadata -f "{{ mpris:artUrl }}\{{ title }}\{{ artist }}" -p "spotifyd")
 
-art_path="$art_path/$track_id"
+art_url="$(cut -d '\' -f1 <<< "$metadata")"
+song="$(cut -d '\' -f2 <<< "$metadata")"
+artist="$(cut -d '\' -f3 <<< "$metadata")"
+art_id="$(grep -o -E "\w+$" <<< "$art_url")"
+
+art_path="$art_path/$art_id"
 
 if [ ! -f "$art_path" ]; then
 	curl -s -o "$art_path" "$art_url" > /dev/null
