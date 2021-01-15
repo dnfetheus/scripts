@@ -26,7 +26,6 @@ if [ ! -f "$art_path" ]; then
 	curl -s -o "$art_path" "$art_url" > /dev/null
 fi
 
-notify-send "Spotify" "$status\n$song by $artist" --icon="$art_path"
+notify-send "$status" "$song by $artist" -i "$art_path" -a "Spotify Player"
 
 exit 0
-
