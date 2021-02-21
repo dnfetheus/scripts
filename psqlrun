@@ -1,3 +1,8 @@
 #!/bin/bash
 
-docker run -d --restart=always --name postgres-db -e POSTGRES_PASSWORD=postgres -v pg_data:/var/lib/postgresql/data -p 5432:5432 postgres:13-alpine
+if [[ ! "$1" =~ ^[0-9]+$ ]] || [[ "$1" -lt "0" ]] || [[ "$1" -gt "65535" ]]; then
+  echo "Invalid argument"
+  exit 1
+fi
+
+docker run -d --restart=always --name postgres-"$USER" -e POSTGRES_PASSWORD=postgres -v pg_data_"$USER":/var/lib/postgresql/data -p "$1":5432 postgres:13-alpine
