@@ -3,10 +3,10 @@
 art_path="$HOME/.cache/spotifyd/arts"
 mkdir -p "$art_path"
 
-if [ "$PLAYER_EVENT" == "start" ] || [ "$PLAYER_EVENT" == "change" ]; then
+if [[ "$PLAYER_EVENT" == "start" ]] || [[ "$PLAYER_EVENT" == "change" ]]; then
 	status="Now playing"
 
-elif [ "$PLAYER_EVENT" == "stop" ]; then
+elif [[ "$PLAYER_EVENT" == "stop" ]]; then
 	status="Paused"
 
 else
